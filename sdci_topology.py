@@ -16,7 +16,7 @@ def run():
     s_zone1 = net.addSwitch('s_zone1') #zone 1
     s_zone2 = net.addSwitch('s_zone2') #zone 2
     s_zone3 = net.addSwitch('s_zone3') #zone 3
-    s0 = net.addSwitch('s0') # interconnexion vers GI et Server
+    s4 = net.addSwitch('s4') # interconnexion vers GI et Server
 
     info('*** Adding Docker containers\n')
     server = net.addDocker('srv', ip='10.0.0.1', dimage='server')
@@ -34,19 +34,19 @@ def run():
     # Zone 1
     net.addLink(dev1, s_zone1, cls=TCLink, delay='5ms')
     net.addLink(gf1, s_zone1, cls=TCLink, delay='2ms')
-    net.addLink(s_zone1, s0, cls=TCLink, delay='1ms')
+    net.addLink(s_zone1, s4, cls=TCLink, delay='1ms')
     # Zone 2
     net.addLink(dev2, s_zone2, cls=TCLink, delay='5ms')
     net.addLink(gf2, s_zone2, cls=TCLink, delay='2ms')
-    net.addLink(s_zone2, s0, cls=TCLink, delay='1ms')
+    net.addLink(s_zone2, s4, cls=TCLink, delay='1ms')
     # Zone 3
     net.addLink(dev3, s_zone3, cls=TCLink, delay='5ms')
     net.addLink(gf3, s_zone3, cls=TCLink, delay='2ms')
-    net.addLink(s_zone3, s0, cls=TCLink, delay='1ms')
+    net.addLink(s_zone3, s4, cls=TCLink, delay='1ms')
     # Coeur du reseau
-    net.addLink(gi2, s0, cls= TCLink, delay='2ms')
-    net.addLink(gwi, s0, clSs=TCLink, delay='2ms')
-    net.addLink(server, s0, cls=TCLink, delay='1ms')
+    net.addLink(gi2, s4, cls= TCLink, delay='2ms')
+    net.addLink(gwi, s4, clSs=TCLink, delay='2ms')
+    net.addLink(server, s4, cls=TCLink, delay='1ms')
 
     info('*** Starting network\n')
     net.start()
