@@ -6,6 +6,8 @@ DPID = 231930737332042 # central switch ID
 PORT_TO_GWI = 5 # port to GWI
 THRESHOLD = 10000 # threshold for latency
 CHECK_INTERVAL = 2 # interval to check the system state
+
+adaptation_done = False # flag to indicate if adaptation is done
 # MAPE loop functions
 
 def monitor():
@@ -28,30 +30,39 @@ def monitor():
         print("An unexpected error occurred:", e)
         return 0
 
-def analyze():
+def analyze(current_packets):
     """
     Analyze function to process collected data.
     """
-    print("Analyzing data...")
-    # Example: Simulate data analysis
-    time.sleep(1)
+    print(f"[Analyzing...] Total packets transmitted to GWI: {current_packets}")
+    return current_packets > THRESHOLD
 
 def plan():
     """
     Plan function to determine necessary actions.
     """
-    print("Planning actions...")
-    # Example: Simulate planning
-    time.sleep(1)
+    print("[Planning...] Overload detected, Preparing to redirect to GI2.")
 
 def execute():
     """
     Execute function to apply the planned actions.
     """
-    print("Executing actions...")
-    # Example: Simulate an HTTP request
+    print("[Executing actions...] Redirecting traffic to GI2 via ofctl_rest.")
+    redirection_rule = {
+        "dpid": DPID,
+        "priority": 100,
+        "match": {
+            "in_port": 1 # port connected to Zone 1
+        },
+        "actions": [
+            {
+                "type": "OUTPUT",
+                "port": 4 # port connected to GI2
+            }
+        ]
+    }
     try:
-        response = requests.get("https://jsonplaceholder.typicode.com/posts/1")
+        response = requests.post("http://localhost:8080/stats/flowentry/add", json=redirection_rule)
         if response.status_code == 200:
             print("HTTP request successful:", response.json())
         else:
@@ -59,16 +70,16 @@ def execute():
     except requests.RequestException as e:
         print("HTTP request error:", e)
 
-def main():
+if __name__ == '__main__':
     """
     Main function to run the MAPE loop.
     """
     while True:
-        monitor()
-        analyze()
-        plan()
-        execute()
-        time.sleep(CHECK_INTERVAL)  # Wait for the specified interval before the next loop
-
-if __name__ == "__main__":
-    main()
+        current_tx = monitor()
+        if not adaptation_done and analyze(current_tx):
+            plan()
+            execute()
+            adaptation_done = True
+        else:
+            print("[Stable Network; No adaptation needed ...]")
+        time.sleep(CHECK_INTERVAL) # Wait for the specified interval before the next loop
