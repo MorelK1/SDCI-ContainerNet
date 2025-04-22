@@ -2,9 +2,9 @@ import time
 import requests
 
 # Global variables
-DPID = 231930737332042 # central switch ID
+DPID = 4 # central switch ID
 PORT_TO_GWI = 5 # port to GWI
-THRESHOLD = 10000 # threshold for latency
+THRESHOLD = 7000 # threshold for latency
 CHECK_INTERVAL = 2 # interval to check the system state
 
 adaptation_done = False # flag to indicate if adaptation is done
@@ -16,7 +16,9 @@ def monitor():
     """
     try:
         stats= requests.get(f"http://localhost:8080/stats/port/{DPID}/{PORT_TO_GWI}").json()
-        return stats['tx_packets']
+        for port_stats in stats[str(DPID)]:
+            if port_stats['port_no'] == PORT_TO_GWI:
+                return port_stats.get('tx_packets', 0) # return the number of transmitted packets
     except requests.RequestException as e:
         print("Error fetching stats:", e)
         return 0
@@ -63,17 +65,15 @@ def execute():
     }
     try:
         response = requests.post("http://localhost:8080/stats/flowentry/add", json=redirection_rule)
-        if response.status_code == 200:
-            print("HTTP request successful:", response.json())
-        else:
-            print("HTTP request failed with status code:", response.status_code)
-    except requests.RequestException as e:
-        print("HTTP request error:", e)
+        # print("[DEBUG] Raw Response Content:", response.text)  # Log raw response
+        print("HTTP request successful:", response.status_code)
+    except Exception as e:
+        print("Error:", e)
 
 if __name__ == '__main__':
-    """
-    Main function to run the MAPE loop.
-    """
+    # """
+    # Main function to run the MAPE loop.
+    # """
     while True:
         current_tx = monitor()
         if not adaptation_done and analyze(current_tx):
@@ -83,3 +83,4 @@ if __name__ == '__main__':
         else:
             print("[Stable Network; No adaptation needed ...]")
         time.sleep(CHECK_INTERVAL) # Wait for the specified interval before the next loop
+    # execute()
