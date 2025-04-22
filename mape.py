@@ -4,7 +4,7 @@ import requests
 # Global variables
 DPID = 4 # central switch ID
 PORT_TO_GWI = 5 # port to GWI
-THRESHOLD = 7000 # threshold for latency
+THRESHOLD = 1200 # threshold for latency
 CHECK_INTERVAL = 2 # interval to check the system state
 
 adaptation_done = False # flag to indicate if adaptation is done
