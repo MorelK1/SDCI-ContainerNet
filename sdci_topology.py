@@ -1,5 +1,5 @@
 from mininet.net import Containernet
-from mininet.node import Controller, Docker
+from mininet.node import Controller, RemoteController, OVSSwitch
 from mininet.link import TCLink
 from mininet.log import setLogLevel, info
 from mininet.cli import CLI
@@ -7,10 +7,10 @@ import time
 
 def run():
     setLogLevel('info')
-    net = Containernet(controller= Controller)
+    net = Containernet(controller= None, switch= OVSSwitch)
 
     info('*** Adding controller\n')
-    net.addController('c0')
+    net.addController('c0', controller= RemoteController, ip='127.0.0.1', port= 6633)
 
     info('*** Adding switches\n')
     s_zone1 = net.addSwitch('s_zone1') #zone 1
