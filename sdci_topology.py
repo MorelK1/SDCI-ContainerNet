@@ -55,7 +55,7 @@ def run():
     server.cmd('node server.js --local_ip 10.0.0.1 --local_port 8080 --local_name srv &')
     gwi.cmd('node gateway.js --local_ip 10.0.0.2 --local_port 8181 --local_name gwi --remote_ip 10.0.0.1 --remote_port 8080 --remote_name srv &')
     gf1.cmd('node gateway.js --local_ip 10.0.0.3 --local_port 8281 --local_name gf1 --remote_ip 10.0.0.2 --remote_port 8181 --remote_name gwi &')
-    dev1.cmd('node device.js --local_ip 10.0.0.4 --local_port 9001 --local_name dev1 --remote_ip 10.0.0.3 --remote_port 8281 --remote_name gf1 --send_period 1000 &')
+    dev1.cmd('node device.js --local_ip 10.0.0.4 --local_port 9001 --local_name dev1 --remote_ip 10.0.0.3 --remote_port 8281 --remote_name gf1 --send_period 3000 &')
     gf2.cmd('node gateway.js --local_ip 10.0.0.5 --local_port 8282 --local_name gf2 --remote_ip 10.0.0.2 --remote_port 8181 --remote_name gwi &')
     dev2.cmd('node device.js --local_ip 10.0.0.6 --local_port 9002 --local_name dev2 --remote_ip 10.0.0.5 --remote_port 8282 --remote_name gf2 --send_period 3000 &')
     gf3.cmd('node gateway.js --local_ip 10.0.0.7 --local_port 8283 --local_name gf3 --remote_ip 10.0.0.2 --remote_port 8181 --remote_name gwi &')
