@@ -3,6 +3,7 @@ from mininet.node import Controller, RemoteController, OVSSwitch
 from mininet.link import TCLink
 from mininet.log import setLogLevel, info
 from mininet.cli import CLI
+from mape import mape_loop
 import time
 
 def run():
@@ -45,7 +46,7 @@ def run():
     net.addLink(s_zone3, s4, cls=TCLink, delay='1ms')
     # Coeur du reseau
     net.addLink(gi2, s4, cls= TCLink, delay='2ms')
-    net.addLink(gwi, s4, clSs=TCLink, delay='2ms')
+    net.addLink(gwi, s4, cls=TCLink, delay='2ms')
     net.addLink(server, s4, cls=TCLink, delay='1ms')
 
     info('*** Starting network\n')
@@ -65,8 +66,16 @@ def run():
     time.sleep(5)
     net.pingAll()
 
-    CLI(net)
-    net.stop()
+    return net
+
 
 if __name__ == '__main__':
-    run()
+    net = run()
+    try:
+        mape_loop(net=net)
+        CLI(net)
+        
+    finally:
+        print("*** Stopping network\n")
+        net.stop()
+   
