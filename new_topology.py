@@ -1,6 +1,7 @@
 
 import logging
 import time
+import json
 from mininet.log import setLogLevel, info
 from mininet.node import RemoteController
 from mininet.cli import CLI
@@ -24,6 +25,8 @@ logging.getLogger('api.openstack.heat.parser').setLevel(logging.DEBUG)
 logging.getLogger('api.openstack.glance').setLevel(logging.DEBUG)
 logging.getLogger('api.openstack.helper').setLevel(logging.DEBUG)
 
+
+GWI_MAC = None
 
 def create_topology():
     net = DCNetwork(monitor=False, enable_learning=True)
@@ -51,7 +54,7 @@ def create_topology():
     s5 = net.addSwitch('s5') 
 
     info('*** Adding Docker containers\n')
-    srv = net.addDocker('srv', ip=ENV_CONFIG["srv"]["LOCAL_IP"], dimage='sdci_server_v1', environment=ENV_CONFIG["srv"], tty=True, stdin_open=True, dcmd="/start_server.sh")
+    srv = net.addDocker('srv', ip=ENV_CONFIG["srv"]["LOCAL_IP"], dimage='sdci_server_v5', environment=ENV_CONFIG["srv"], dcmd="/start_server.sh")
     gwi = net.addDocker('gwi', ip=ENV_CONFIG["gwi"]["LOCAL_IP"], dimage='sdci_gateway', environment=ENV_CONFIG["gwi"], dcmd="/start_gw.sh")
     gf1 = net.addDocker('gf1', ip=ENV_CONFIG["gf1"]["LOCAL_IP"], dimage='sdci_gateway', environment=ENV_CONFIG["gf1"], dcmd="/start_gw.sh")
     dev1 = net.addDocker('dev1', ip=ENV_CONFIG["dev1"]["LOCAL_IP"], dimage='sdci_device', environment=ENV_CONFIG["dev1"], dcmd="/start_dev.sh")
@@ -74,14 +77,21 @@ def create_topology():
     net.addLink(s_zone3, s4, cls=TCLink)
     # Coeur du reseau
     net.addLink(s4, s5, cls= TCLink)
-    net.addLink(s5, dc1, cls= TCLink)
+    net.addLink(s4, dc1, cls= TCLink)
 
     net.addLink(gwi, s5, cls=TCLink)
     net.addLink(srv, s5, cls=TCLink)
-    
+
 
     info('*** Starting network\n')
     net.start()
+
+    GWI_MAC = gwi.MAC()
+    print(f"GWI MAC: {GWI_MAC}")
+    with open("mac.json", "w") as f:
+        json.dump({"gwi": gwi.MAC(), "gf1": gf1.MAC()}, f)
+
+    
     info('*** Testing connectivity\n')
     net.ping([srv, dev1])
     net.ping([srv, dev2])
