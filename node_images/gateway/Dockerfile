@@ -25,5 +25,6 @@ RUN apk add --update --no-cache \
 RUN npm init -y
 RUN npm install express systeminformation yargs request
 
-ENTRYPOINT [ "/start_gw.sh" ]
+ENV VIM_EMU_CMD /start_gw.sh
+ENV VIM_EMU_CMD_STOP "echo 'Stopping the container now.'"
 

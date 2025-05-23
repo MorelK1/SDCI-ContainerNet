@@ -25,6 +25,3 @@ RUN apk add --update --no-cache \
 RUN npm init -y
 RUN npm install express systeminformation yargs request
 
-
-ENTRYPOINT [ "/start_server.sh" ]
-
