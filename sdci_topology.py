@@ -55,7 +55,8 @@ def run():
     info('*** Lauching process inside container\n')
     server.cmd('node server.js --local_ip 10.0.0.1 --local_port 8080 --local_name srv &')
     gwi.cmd('node gateway.js --local_ip 10.0.0.2 --local_port 8181 --local_name gwi --remote_ip 10.0.0.1 --remote_port 8080 --remote_name srv &')
-    gf1.cmd('node gateway.js --local_ip 10.0.0.3 --local_port 8281 --local_name gf1 --remote_ip 10.0.0.2 --remote_port 8181 --remote_name gwi &')
+    gi2.cmd('node gateway.js --local_ip 10.0.0.12 --local_port 8182 --local_name gi2 --remote_ip 10.0.0.1 --remote_port 8080 --remote_name srv &')
+    gf1.cmd('node gateway.js --local_ip 10.0.0.3 --local_port 8281 --local_name gf1 --remote_ip 10.0.0.12 --remote_port 8182 --remote_name gi2 &')
     dev1.cmd('node device.js --local_ip 10.0.0.4 --local_port 9001 --local_name dev1 --remote_ip 10.0.0.3 --remote_port 8281 --remote_name gf1 --send_period 3000 &')
     gf2.cmd('node gateway.js --local_ip 10.0.0.5 --local_port 8282 --local_name gf2 --remote_ip 10.0.0.2 --remote_port 8181 --remote_name gwi &')
     dev2.cmd('node device.js --local_ip 10.0.0.6 --local_port 9002 --local_name dev2 --remote_ip 10.0.0.5 --remote_port 8282 --remote_name gf2 --send_period 3000 &')
@@ -71,11 +72,12 @@ def run():
 
 if __name__ == '__main__':
     net = run()
-    try:
-        mape_loop(net=net)
-        CLI(net)
+    CLI(net)
+    # try:
+    #     mape_loop(net=net)
+    #     CLI(net)
         
-    finally:
-        print("*** Stopping network\n")
-        net.stop()
+    # finally:
+    #     print("*** Stopping network\n")
+    #     net.stop()
    
