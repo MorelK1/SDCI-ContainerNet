@@ -51,7 +51,7 @@ ENV_CONFIG = {
         "REMOTE_IP": "10.0.0.3",
         "REMOTE_PORT": "8281",
         "REMOTE_NAME": "gf1",
-        "SEND_PERIOD": "3000"
+        "SEND_PERIOD": "1000"
     },
     "dev2": {
         "LOCAL_IP": "10.0.0.6",
