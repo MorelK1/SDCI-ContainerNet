@@ -239,28 +239,3 @@ if __name__ == "__main__":
             # stop_monitoring()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    # c,r = get_monitoring_data()
-
-    # print(c)
-    # print("----------------------------------------")
-    # print(r)
-
-
-
-
-
-    
-
-    
